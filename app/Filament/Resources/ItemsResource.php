@@ -16,6 +16,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -76,15 +78,17 @@ class ItemsResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('sku'),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('sku')->searchable(),
                 TextColumn::make('uom.name'),
                 TextColumn::make('category.name'),
                 TextColumn::make('stock'),
                 TextColumn::make('description')->limit(20),
             ])
             ->filters([
-                //
+                SelectFilter::make('item_categories_id')
+                    ->options(ItemCategory::all()->pluck('name', 'id'))
+                    ->searchable()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
